@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  api:
+    restart: always
+    container_name: tgs-api
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "8081:8081"
+      - "5678:5678"
+      - "5679:5679"
+    volumes:
+      - ./src:/opt/app/
+    networks:
+      - net-host
+
+  qdrant:
+    image: qdrant/qdrant
+    container_name: tgs-qdrant
+    environment:
+      - QDRANT__SERVICE__API_KEY=woXKPNeAD8uq1fVpLLPrDMX5AM4xyjAnLDPzszQuzZKFn
+    ports:
+      - "6333:6333"
+    volumes:
+      - "./qdrant_storage:/qdrant/storage"
+    networks:
+      - net-host
+
+networks:
+  net-host:
+    external: true
