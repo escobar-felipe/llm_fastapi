@@ -2,9 +2,25 @@
 
 ## Como rodar
 
+### Crie uma network com nome net-host
+
+```bash
+docker network create \
+--driver=bridge \
+--subnet=172.35.0.0/24 \
+--gateway=172.35.0.254 \
+net-host
+```
+
+### Crie o arquivo .env como no exemplo abaixo
+
+### Comando para criar os containers
+
 ```bash
 docker compose up -d --build
 ```
+
+### utilize o arquivo docs_summurize_retriever.ipynb para criar a coleção de vetores
 
 ## Logs
 
