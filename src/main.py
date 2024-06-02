@@ -8,6 +8,7 @@ from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
 
 from handler_error import handle_error
+from routers.chat.router import chat_router
 from utils.functions import get_current_username_docs
 
 # Create logger
@@ -35,6 +36,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(chat_router)
+
 SECRET_KEY: str = os.environ.get("SECRET_KEY")
 
 if SECRET_KEY is None:
@@ -53,12 +56,12 @@ async def health():
 
 @app.get("/docs", include_in_schema=False)
 async def get_swagger_documentation(username: str = Depends(get_current_username_docs)):
-    return get_swagger_ui_html(openapi_url="/api/openapi.json", title="docs")
+    return get_swagger_ui_html(openapi_url="/openapi.json", title="docs")
 
 
 @app.get("/redoc", include_in_schema=False)
 async def get_redoc_documentation(username: str = Depends(get_current_username_docs)):
-    return get_redoc_html(openapi_url="/api/openapi.json", title="docs")
+    return get_redoc_html(openapi_url="/openapi.json", title="docs")
 
 
 @app.get("/openapi.json", include_in_schema=False)
