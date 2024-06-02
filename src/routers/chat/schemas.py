@@ -1,6 +1,5 @@
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
-from openai import BaseModel
 from pydantic import BaseModel
 
 
@@ -9,16 +8,16 @@ class Conversation(BaseModel):
 
 
 class Message(BaseModel):
-    content: str | None
-    additional_kwargs: dict | None
-    response_metadata: Optional[dict] = None
-    type: str | None
+    content: Optional[str] = None
+    additional_kwargs: Optional[Dict[str, Any]] = None
+    response_metadata: Optional[Dict[str, Any]] = None
+    type: Optional[str] = None
     name: Optional[str] = None
-    id: str | None
-    example: bool | None
-    tool_calls: Optional[List] = []
-    invalid_tool_calls: Optional[List] = []
-    usage_metadata: Optional[dict] = None
+    id: Optional[str] = None
+    example: Optional[bool] = None
+    tool_calls: Optional[List[Any]] = []
+    invalid_tool_calls: Optional[List[Any]] = []
+    usage_metadata: Optional[Dict[str, Any]] = None
 
 
 class Messages(BaseModel):

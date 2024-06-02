@@ -1,3 +1,5 @@
+from langchain.retrievers.multi_vector import MultiVectorRetriever, SearchType
+from langchain.storage import InMemoryByteStore
 from langchain.tools.retriever import create_retriever_tool
 from langchain_qdrant import Qdrant
 
@@ -9,21 +11,28 @@ vectorstore = Qdrant(
 
 id_key = "doc_id"
 
+store = InMemoryByteStore()
+
+
 # The retriever (empty to start)
-# retriever = MultiVectorRetriever(
-#     vectorstore=vectorstore,
-#     byte_store=store,
-#     id_key=id_key,
-# )
+retriever = MultiVectorRetriever(
+    vectorstore=vectorstore,
+    byte_store=store,
+    id_key=id_key,
+)
 
 # retriever = vectorstore.as_retriever(
 #     search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.5}
 # )
 
-retriever = vectorstore.as_retriever(
-    search_type="mmr",
-    search_kwargs={"k": 5, "lambda_mult": 0.25, "fetch_k": 50},
-)
+# retriever = vectorstore.as_retriever(
+#     search_type="mmr",
+#     search_kwargs={"k": 5, "lambda_mult": 0.25, "fetch_k": 50},
+# )
+
+
+retriever.search_type = SearchType.similarity
+
 
 retriever_tool = create_retriever_tool(
     retriever,
