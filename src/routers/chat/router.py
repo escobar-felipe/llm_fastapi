@@ -15,5 +15,8 @@ async def conversation(
             ("user", prompt.question),
         ]
     }
-    result = graph.invoke(inputs)
+    result = graph.invoke(
+        inputs,
+        {"recursion_limit": 5},
+    )
     return result
