@@ -1,12 +1,17 @@
-from langchain.retrievers.multi_vector import MultiVectorRetriever, SearchType
 from langchain.storage import InMemoryByteStore
 from langchain.tools.retriever import create_retriever_tool
 from langchain_qdrant import Qdrant
 
 from ext.qdrant_client import embedding_function, qdrant_client
 
-vectorstore = Qdrant(
+vectorstore_summaries = Qdrant(
     client=qdrant_client, collection_name="summaries-tgs", embeddings=embedding_function
+)
+
+vectorstore_questions = Qdrant(
+    client=qdrant_client,
+    collection_name="hypothetical-question-tgs",
+    embeddings=embedding_function,
 )
 
 id_key = "doc_id"
@@ -14,30 +19,20 @@ id_key = "doc_id"
 store = InMemoryByteStore()
 
 
-# The retriever (empty to start)
-retriever = MultiVectorRetriever(
-    vectorstore=vectorstore,
-    byte_store=store,
-    id_key=id_key,
+retriever_summaries = vectorstore_summaries.as_retriever()
+retriever_questions = vectorstore_questions.as_retriever()
+
+retriever_tool_summaries = create_retriever_tool(
+    retriever_summaries,
+    "therapeutic_guidelines_smoking_summaries",
+    "This tool provides a concise summary of the 'Protocolo Clínico e Diretrizes Terapêuticas do Tabagismo' document. The summary includes key points, major guidelines, and critical information related to the diagnosis, treatment, and management of tobacco addiction as described in the clinical protocol.",
 )
 
-# retriever = vectorstore.as_retriever(
-#     search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.5}
-# )
-
-# retriever = vectorstore.as_retriever(
-#     search_type="mmr",
-#     search_kwargs={"k": 5, "lambda_mult": 0.25, "fetch_k": 50},
-# )
-
-
-retriever.search_type = SearchType.similarity
-
-
-retriever_tool = create_retriever_tool(
-    retriever,
-    "therapeutic_guidelines_smoking",
-    "The Ministry of Health, through the Secretariat of Specialized Health Care and the Secretariat of Science, Technology, Innovation, and Strategic Inputs in Health, has approved the Clinical Protocol and Therapeutic Guidelines for Smoking. This ordinance updates the national parameters for diagnosing, treating, and following up on smoking-related health issues in Brazil. The protocol, available on the Ministry of Health’s website, includes diagnostic criteria, treatment options, and guidelines for health professionals. It mandates the informed consent of patients regarding potential risks and side effects and requires SUS managers to structure and coordinate the healthcare network for effective treatment of smoking",
+retriever_tool_questions = create_retriever_tool(
+    retriever_questions,
+    "therapeutic_guidelines_smoking_questions_and_answer",
+    "This tool generates example questions based on the contents of the 'Protocolo Clínico e Diretrizes Terapêuticas do Tabagismo' document. These questions can be used for educational purposes, training, or to facilitate discussions around the guidelines and protocols described in the document.",
 )
 
-tools = [retriever_tool]
+
+tools = [retriever_tool_summaries, retriever_tool_questions]

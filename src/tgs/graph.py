@@ -3,12 +3,12 @@ from langgraph.prebuilt import ToolNode, tools_condition
 
 from tgs.edges import AgentState, grade_documents
 from tgs.nodes import agent, generate, rewrite
-from tgs.tools import retriever_tool
+from tgs.tools import retriever_tool_questions, retriever_tool_summaries
 
 workflow = StateGraph(AgentState)
 
 workflow.add_node("agent", agent)
-retrieve = ToolNode([retriever_tool])
+retrieve = ToolNode([retriever_tool_questions, retriever_tool_summaries])
 workflow.add_node("retrieve", retrieve)
 workflow.add_node("rewrite", rewrite)
 workflow.add_node("generate", generate)
